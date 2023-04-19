@@ -16,7 +16,7 @@ const emailHandler = (state,action)=>{
 
 const passWordHandler = (state,action)=>{
   if(action.type === "USER_INPUT"){
-    return {value:action.val,valid:action.val.length>6};
+    return {value:action.val,valid:action.val.trim().length>6};
   }
   if(action.type === "INPUT_BLUR"){
     return {value : state.value,valid:state.valid };
@@ -35,11 +35,16 @@ const Login = (props) => {
   const [collageIsValid,setCollageIsValid] = useState();
   const [formIsValid, setFormIsValid] = useState(false);
 
+  const {valid:emailValid} = emailState;
+  const {valid:passValid} = passwordState;
   useEffect(()=>{
-    setFormIsValid(
-      emailState.value.includes('@') && passwordState.value.trim().length > 6 && enteredCollage.trim().length
-    );
-  },[emailState,passwordState, enteredCollage])
+    const id= setTimeout(() => {
+      setFormIsValid( emailState.value.includes('@') && passwordState.value.trim().length > 6 && enteredCollage.trim().length );      
+    }, 500);
+    return ()=>{
+      clearInterval(id);
+    }
+  },[emailValid, passValid, enteredCollage])
   const emailChangeHandler = (event) => {
     dispachEmail({type:"USER_INPUT", val:event.target.value})
   };
